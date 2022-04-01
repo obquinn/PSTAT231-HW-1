@@ -31,11 +31,19 @@ Relevant Packages:
 #install.packages("corrplot")
 #install.packages("ggthemes")
 
+<<<<<<< HEAD
 #library(tidyverse)
 #library(tidymodels)
 #library(ggplot2)
 #library(corrplot)
 #library(ggthemes)
+=======
+library(tidyverse)
+library(tidymodels)
+library(ggplot2)
+library(corrplot)
+library(ggthemes)
+>>>>>>> d6d6ffc4f8c79d973fca6eacadf972bf80a5d917
 
 ```
 
