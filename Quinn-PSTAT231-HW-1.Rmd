@@ -6,17 +6,43 @@ output: html_document
 ---
 
 ```{r setup, echo=FALSE}
-library(knitr)
+# library(knitr)
 # set global chunk options: images will be 7x5 inches
 knitr::opts_chunk$set(fig.width=7, fig.height=5)
 options(digits = 4)
+#extra opts to keep the junk out of the html
+knitr::opts_chunk$set(echo = TRUE, message = FALSE,
+                      warning = FALSE)
 
 
-## indents are for indenting r code as formatted text
-## They may need to be adjusted depending on your OS
+# indents are for indenting r code as formatted text
+# They may need to be adjusted depending on your OS
 # if your output looks odd, increase or decrease indent
 indent1 = '    '
 indent2 = '        '
 indent3 = '            '
 ```
+
+Relevant Packages:
+```{r}
+#install.packages("tidyverse")
+#install.packages("tidymodels")
+#install.packages("ggplot2")
+#install.packages("corrplot")
+#install.packages("ggthemes")
+
+#library(tidyverse)
+#library(tidymodels)
+#library(ggplot2)
+#library(corrplot)
+#library(ggthemes)
+
+```
+
+
+
+#### Question 1: 
+
+
+
 
