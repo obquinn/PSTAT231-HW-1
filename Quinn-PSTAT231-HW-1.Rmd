@@ -1,5 +1,5 @@
 ---
-title: "PSTAT231-HW-1"
+title: "PSTAT231 Homework 1"
 author: "Olivia Quinn"
 date: "`r format(Sys.Date(), '%B %d, %Y')`"
 output: html_document
@@ -8,7 +8,7 @@ output: html_document
 ```{r setup, echo=FALSE}
 # library(knitr)
 # set global chunk options: images will be 7x5 inches
-knitr::opts_chunk$set(fig.width=7, fig.height=5)
+knitr::opts_chunk$set(fig.width=8, fig.height=6)
 options(digits = 4)
 #extra opts to keep the junk out of the html
 knitr::opts_chunk$set(echo = TRUE, message = FALSE,
@@ -25,32 +25,184 @@ indent3 = '            '
 
 Relevant Packages:
 ```{r}
-#install.packages("tidyverse")
-#install.packages("tidymodels")
-#install.packages("ggplot2")
-#install.packages("corrplot")
-#install.packages("ggthemes")
+# install.packages("tidyverse")
+# install.packages("tidymodels")
+# install.packages("ggplot2")
+# install.packages("corrplot")
+# install.packages("ggthemes")
+# install.packages("RColorBrewer)
 
-<<<<<<< HEAD
-#library(tidyverse)
-#library(tidymodels)
-#library(ggplot2)
-#library(corrplot)
-#library(ggthemes)
-=======
 library(tidyverse)
 library(tidymodels)
 library(ggplot2)
 library(corrplot)
 library(ggthemes)
->>>>>>> d6d6ffc4f8c79d973fca6eacadf972bf80a5d917
+library(RColorBrewer)
 
 ```
 
+# Machine Learning Main Ideas
+
+### Question 1: Define supervised and unsupervised learning. What are the difference(s) between them?
+
+Supervised learning problems include outcome variables which guide the learning process. Unsupervised learning problems have no measurements of the outcome, and instead are guided only by the features (input variables). If you were to train a model to identify spam emails, you would feed it emails that have been previously identified to be spam (via hand coding, for example). Such that you know and can estimate the "outcomes" variables, the model is considered supervised learning. You could also estimate an error rate based on predicted spam vs. actual spam. Unsupervised models do not have these benefits and are less developed in the literature -- but scholarship in this area is growing! [ESL p. 2]
+
+### Question 2: Explain the difference between a regression model and a classification model, specifically in the context of machine learning.
+
+Regression models predict quantitative or continuous outcomes. Classification models predict non-numerical outputs like categorical or other qualitative values. 
+
+### Question 3: Name two commonly used metrics for regression ML problems. Name two commonly used metrics for classification ML problems.
+
+For regression ML problems, Mean Squared Error (MSE) and R-Squared are two commonly used metrics. For classification models, accuracy and precision are two of the most common (and simple!) metrics. 
+
+### Question 4: As discussed, statistical models can be used for different purposes. These purposes can generally be classified into the following three categories. Provide a brief description of each.
+
+Descriptive models: These models visually emphasize a trend in data. They merely describe the data as it is, revealing patterns etc., so that more complex questions can be asked. 
+
+Inferential models: These models seek to test theories and explain relationships between variables, sometimes cause and effect relationships. Inferential models ask which features are significant for a given outcome. 
+
+Predictive models: These models seek to accurately predict future outcomes based on the values of input variables or predictors. The aim is to predict Y using as few predictors as possible with the least amount of reducible error. [Day 2 lecture slides]
+
+### Question 5: Predictive models are frequently used in machine learning, and they can usually be described as either mechanistic or empirically-driven. Answer the following questions.
+
+##### Define mechanistic. Define empirically-driven. How do these model types differ? How are they similar?
+
+Both mechanistic and empirically-driven models attempt to estimate _f_. Mechanistic models assume a parametric form such that _f_ represents some function of the input variables (features) which affect the outcome, Y. We cannot know the true value of _f_ so we must estimate it via a parametric model. Empirically-driven models assume nothing about the relationship between features and outcomes. These models require a lot more data, but are more flexible in their usage. Both models can lead to overfitting, but the risk is less so with a mechanistic model that does not have too many parameters. 
+
+##### In general, is a mechanistic or empirically-driven model easier to understand? Explain your choice.
+
+A mechanistic model is easier to understand. To me, this is classically represented by linear regression, which has a clear set of assumptions, can directly test theories that are pre-developed, and provides a clearly defined estimate of _f_. As flexibility increases with empirically-driven models, so does complexity.
+
+##### Describe how the bias-variance tradeoff is related to the use of mechanistic or empirically-driven models.
+
+The bias-variance tradeoff is present in both mechanistic and empirically-driven models, but in different ways. The challenge is select a model's complexity that makes this tradeoff in such a way that minimizes prediction (or test) error. In mechanistic models, the risk is usually one of high bias and low variance. In empirically-driven models, the risk is of low bias and high variance. If a special structure is known to exist, a model that incorporates that structure will reduce both the bias and variance. The problem is that such a structure is never fully known, and linear or other mechanistic models are often too simple. This results in high bias. When a model does not assume a structure, as empirically-driven models do not, the prediction "line" will fit the data better, resulting in low bias from the 'true' value, but higher variance between predictions. Different methods can help us estimate the test error of a given prediction method, and thus help us estimate how much model complexity is optimal [ESL p.38]. 
+
+### Question 6: A political candidate’s campaign has collected some detailed voter history data from their constituents. The campaign is interested in two questions:
+
+1. Given a voter’s profile/data, how likely is it that they will vote in favor of the candidate?
+
+2. How would a voter’s likelihood of support for the candidate change if they had personal contact with the candidate?
+
+##### Classify each question as either predictive or inferential. Explain your reasoning for each.
+
+Question 1 is predictive, given that the campaign is interested in how the voter will vote (outcome) based on his/her profile (the features or predictor variables). For this question, they are interested in what will happen, not why or how a constituent's profile affects his or her vote choice. The campaign likely has data on other constituents and their stated or revealed vote choice that they can develop a predictive model based on. Question 2 is inferential, given that the campaign wants to know if the specific predictor variable of personal contact has an effect on the outcome. This question derives from the political science theory that voters who feel a personal connection with a candidate are more likely to vote for them. 
+
+***
+
+# Exploratory Data Analysis 
+
+### Histogram of "hwy" variable
+
+Highway mpg values in this data set range from just over 10 mpg to above 40. The variable is double-peaked, meaning most cars have a mpg of ~15-16 or ~35-36. We might assume these peaks reveal a distinct grouping of car type in the data, like sedan-type commuter cars vs. trucks, for example.
+
+```{r}
+ggplot(mpg, aes(hwy)) + 
+  geom_histogram(binwidth=2, color = "white") +
+  labs(title= "Histogram of MPG for 38 popular models of cars (1999-2008)")
+```
+
+ 
+
+### Scatterplot of "hwy" and "cty"
+
+City miles per gallon increases as highway miles per gallon increases. There is a clear positive relationship here, which we would expect given that an engine's efficiency holds across conditions. Of course, highway mpg has a higher range because all combustion engines use less fuel at higher speeds. 
+
+```{r}
+ggplot (mpg, aes(hwy, cty)) + 
+  geom_point() +
+  labs(title= "Scatterplot of MPG (highway and city) for 38 popular models of cars (1999-2008)")
+```
+
+### Barplot of "manfacturer"
+
+Lincoln produced the least cars, Dodge produced the most. 
+
+```{r}
+
+manufacturer_count <- mpg %>% 
+  count(manufacturer) %>%  
+  arrange(desc(n))
+
+ggplot(manufacturer_count, aes(y = reorder(manufacturer, -n), x = n)) +
+  geom_bar(stat="identity") +
+  labs(title= "Barplot: Model Count by Manufacturer for 38 popular models of cars (1999-2008)")
+
+# To reorder a geom_bar: count by group & arrange in descending order -> new df. 
+# Then reorder in ggplot and use stat="identity" to tell geom_bar that it doesn't have to aggregate.
+# Give the Y (or x here) values as "n"
+```
+
+### Boxplot of "hwy" grouped by "cyl"
+
+There's a pretty clear pattern here indicating that a higher number of cylinders is associated with lower mpg. 
+
+```{r}
+
+ggplot(mpg, aes(as.factor(cyl), hwy, fill= as.factor(cyl))) +
+  geom_boxplot(alpha = 0.3) +
+  scale_fill_brewer(palette="Dark2") +
+  labs(title= "Barplot of Hwy MPG grouped by Cylinders for 38 popular models of cars (1999-2008)")
+
+```
+
+### Lower triangle correlation matrix of the "mpg" dataset  
+
+Positively correlated: Highway and city MPGs; displacement and cylinders
+
+Negatively correlated: both MPG variables and displacement; both MPG variables and cylinders
+
+This makes sense! Bigger, more powerful engines get worse gas mileage. 
+
+I am surprised that model year is not (strongly) positively correlated with MPGs. Over a ten year period, manufacturers weren't able to deliver better gas mileage? You'd think that would be the right thing to do for both consumers and the environment, but alas... 
+
+```{r}
+#is it possible to create a correlation matrix with a data set that has both numeric and non-numeric data? Can't figure that out or find an example of someone else using corrplot() with categorical data. Didn't want to convert non-numeric to numeric and end up with an arbitrary ordering for manufacturers, model, class... maybe dummy vars would work here? but that would make a crazy huge matrix. hmmm...
+
+matrix <- cor(mpg[, unlist(lapply(mpg, is.numeric))])
+corrplot (matrix, type = 'lower', addCoef.col = 'black')
+```
 
 
-#### Question 1: 
+# 231 Exercises 
 
+### Graphic 1 
+
+```{r}
+ggplot(mpg, aes(hwy, class)) +
+  geom_boxplot(lwd=0.7) +
+  theme_minimal() +
+  geom_point(position=position_jitter(width = 0), alpha = 0.4, size = 2, stroke = 0.2) +
+  ylab("Vehicle Class") + xlab ("Highway MPG") + xlim(10,45) +
+  theme(axis.text=element_text(size=16, colour = "grey50"), 
+          axis.title=element_text(size=16, colour = "grey50"),
+           panel.grid.minor = element_blank())
+```
+
+### Graphic 2
+
+```{r}
+ggplot(mpg, aes(class,hwy,fill=drv)) +
+  geom_boxplot(lwd=0.8, outlier.size = 2) +
+  theme(axis.text=element_text(size=12, colour = "grey50"), 
+          axis.title=element_text(size=12, colour = "grey50"), 
+            legend.key.size = unit(2,"line"),
+              legend.title = element_text(size = 12),
+                legend.text = element_text(size = 12))
+
+```
+
+### Graphic 3 
+
+```{r}
+ggplot(mpg, mapping = aes(x = displ, y = hwy)) + 
+  geom_point(mapping = aes(color = drv), size = 2) + 
+  geom_smooth(mapping = aes(x = displ, y = hwy, linetype = drv), size = 1.5, se = FALSE) +
+  theme(axis.text=element_text(size=15, colour = "black"), 
+          axis.title=element_text(size=15, colour = "black"), 
+            legend.key.size = unit(2,"line"),
+              legend.title = element_text(size = 15),
+                legend.text = element_text(size = 15))
+```
 
 
 
